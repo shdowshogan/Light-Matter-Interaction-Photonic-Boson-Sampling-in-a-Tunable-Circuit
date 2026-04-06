@@ -1,0 +1,6 @@
+.ipython/
+.jupyter_config/
+.jupyter_data/
+.jupyter_runtime/
+
+executed_*.ipynb
