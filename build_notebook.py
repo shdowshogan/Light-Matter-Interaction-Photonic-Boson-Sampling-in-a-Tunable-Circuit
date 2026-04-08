@@ -245,6 +245,150 @@ cells = [
                 print(svg)
 
 
+        def coherent_visibility(U, input_modes, output_modes, samples=4000, seed=7):
+            rng = __import__("random").Random(seed)
+            input_idx = [m - 1 for m in input_modes]
+            output_idx = [m - 1 for m in output_modes]
+
+            p0 = 0.0
+            for _ in range(samples):
+                phases = [rng.uniform(0.0, 2.0 * math.pi) for _ in input_idx]
+                prod = 1.0
+                for out_j in output_idx:
+                    amp = 0j
+                    for idx, in_i in enumerate(input_idx):
+                        amp += U[in_i][out_j] * cmath.exp(1j * phases[idx])
+                    prod *= abs(amp) ** 2
+                p0 += prod
+            p0 /= samples
+
+            p_inf = 1.0
+            for out_j in output_idx:
+                incoherent_intensity = sum(abs(U[in_i][out_j]) ** 2 for in_i in input_idx)
+                p_inf *= incoherent_intensity
+
+            return visibility(p_inf, p0)
+
+
+        def svg_visibility_panel(title, labels, quantum_vals, coherent_vals, y_min=-1.1, y_max=1.1):
+            width = 980
+            height = 360
+            margin_left = 70
+            margin_right = 20
+            margin_top = 45
+            margin_bottom = 115
+            plot_w = width - margin_left - margin_right
+            plot_h = height - margin_top - margin_bottom
+
+            def y_map(v):
+                return margin_top + (y_max - v) * plot_h / (y_max - y_min)
+
+            zero_y = y_map(0.0)
+            n = len(labels)
+            slot = plot_w / max(n, 1)
+            bar_w = slot * 0.60
+
+            pieces = [
+                f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">',
+                '<rect width="100%" height="100%" fill="white"/>',
+                f'<text x="{width/2}" y="26" font-size="22" text-anchor="middle" font-family="Arial">{title}</text>',
+                f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{margin_top + plot_h}" stroke="black"/>',
+                f'<line x1="{margin_left}" y1="{zero_y}" x2="{margin_left + plot_w}" y2="{zero_y}" stroke="black"/>',
+            ]
+
+            for tick in [-1.0, -0.5, 0.0, 0.5, 1.0]:
+                y = y_map(tick)
+                pieces.append(f'<line x1="{margin_left}" y1="{y}" x2="{margin_left + plot_w}" y2="{y}" stroke="#dddddd"/>')
+                pieces.append(f'<text x="{margin_left-10}" y="{y+4}" font-size="11" text-anchor="end" font-family="Arial">{tick:.1f}</text>')
+
+            for i, label in enumerate(labels):
+                x_center = margin_left + slot * (i + 0.5)
+                x = x_center - bar_w / 2
+                y_q = y_map(quantum_vals[i])
+                top = min(y_q, zero_y)
+                height_rect = abs(zero_y - y_q)
+                pieces.append(f'<rect x="{x}" y="{top}" width="{bar_w}" height="{height_rect}" fill="#f8b4b4" stroke="#5a67d8" stroke-width="1.2"/>')
+
+                y_c = y_map(coherent_vals[i])
+                pieces.append(f'<circle cx="{x_center}" cy="{y_c}" r="4" fill="#f6e05e" stroke="#444444" stroke-width="1"/>')
+
+                pieces.append(
+                    f'<text x="{x_center}" y="{margin_top + plot_h + 14}" font-size="10" text-anchor="end" transform="rotate(-45 {x_center},{margin_top + plot_h + 14})" font-family="Arial">{label}</text>'
+                )
+
+            pieces.append(f'<rect x="{width-240}" y="18" width="16" height="10" fill="#f8b4b4" stroke="#5a67d8" stroke-width="1.2"/>')
+            pieces.append(f'<text x="{width-218}" y="28" font-size="12" font-family="Arial">Quantum visibility</text>')
+            pieces.append(f'<circle cx="{width-112}" cy="24" r="4" fill="#f6e05e" stroke="#444444" stroke-width="1"/>')
+            pieces.append(f'<text x="{width-98}" y="28" font-size="12" font-family="Arial">Coherent-state prediction</text>')
+            pieces.append("</svg>")
+            return "".join(pieces)
+
+
+        def svg_line_chart(title, x_vals, series, x_label, y_label, y_min=None, y_max=None):
+            width = 860
+            height = 470
+            margin_left = 80
+            margin_right = 20
+            margin_top = 50
+            margin_bottom = 70
+            plot_w = width - margin_left - margin_right
+            plot_h = height - margin_top - margin_bottom
+
+            all_y = []
+            for item in series:
+                all_y.extend(item["y"])
+            if y_min is None:
+                y_min = min(all_y)
+            if y_max is None:
+                y_max = max(all_y)
+            x_min = min(x_vals)
+            x_max = max(x_vals)
+
+            def x_map(x):
+                return margin_left + (x - x_min) * plot_w / (x_max - x_min)
+
+            def y_map(y):
+                return margin_top + (y_max - y) * plot_h / (y_max - y_min)
+
+            pieces = [
+                f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">',
+                '<rect width="100%" height="100%" fill="white"/>',
+                f'<text x="{width/2}" y="28" font-size="22" text-anchor="middle" font-family="Arial">{title}</text>',
+                f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{margin_top + plot_h}" stroke="black"/>',
+                f'<line x1="{margin_left}" y1="{margin_top + plot_h}" x2="{margin_left + plot_w}" y2="{margin_top + plot_h}" stroke="black"/>',
+            ]
+
+            for tick in range(6):
+                frac = tick / 5
+                y_val = y_min + frac * (y_max - y_min)
+                y = y_map(y_val)
+                pieces.append(f'<line x1="{margin_left}" y1="{y}" x2="{margin_left + plot_w}" y2="{y}" stroke="#dddddd"/>')
+                pieces.append(f'<text x="{margin_left-10}" y="{y+4}" font-size="11" text-anchor="end" font-family="Arial">{y_val:.3f}</text>')
+
+            for x in x_vals:
+                x_pos = x_map(x)
+                pieces.append(f'<line x1="{x_pos}" y1="{margin_top + plot_h}" x2="{x_pos}" y2="{margin_top + plot_h + 5}" stroke="black"/>')
+                pieces.append(f'<text x="{x_pos}" y="{margin_top + plot_h + 20}" font-size="11" text-anchor="middle" font-family="Arial">{x}</text>')
+
+            for item in series:
+                pts = " ".join(f"{x_map(x)},{y_map(y)}" for x, y in zip(x_vals, item["y"]))
+                pieces.append(f'<polyline fill="none" stroke="{item["color"]}" stroke-width="2.2" stroke-dasharray="{item.get("dash", "none")}" points="{pts}"/>')
+                for x, y in zip(x_vals, item["y"]):
+                    pieces.append(f'<circle cx="{x_map(x)}" cy="{y_map(y)}" r="4" fill="{item["color"]}" stroke="white" stroke-width="1"/>')
+
+            legend_x = width - 235
+            legend_y = 65
+            for idx, item in enumerate(series):
+                yy = legend_y + idx * 20
+                pieces.append(f'<line x1="{legend_x}" y1="{yy}" x2="{legend_x+18}" y2="{yy}" stroke="{item["color"]}" stroke-width="2.2" stroke-dasharray="{item.get("dash", "none")}"/>')
+                pieces.append(f'<text x="{legend_x+24}" y="{yy+4}" font-size="12" font-family="Arial">{item["name"]}</text>')
+
+            pieces.append(f'<text x="{width/2}" y="{height-12}" font-size="16" text-anchor="middle" font-family="Arial">{x_label}</text>')
+            pieces.append(f'<text x="22" y="{height/2}" font-size="16" text-anchor="middle" transform="rotate(-90 22,{height/2})" font-family="Arial">{y_label}</text>')
+            pieces.append("</svg>")
+            return "".join(pieces)
+
+
         print("Helpers loaded.")
         """
     ),
@@ -308,6 +452,35 @@ cells = [
     ),
     md(
         """
+        ## Exact paper numbers reproduced in this notebook
+
+        The paper explicitly reports several quantitative results in the main text. Some of these can be reproduced exactly from the published matrices, and others are reported summary distances between theory and experiment.
+
+        The table below separates those two cases clearly:
+
+        - **Exact from supplementary matrix**: directly recalculated here from the published unitary.
+        - **Reported in paper**: quoted from the paper text because the raw experimental bar heights are not tabulated in the PDF.
+        """
+    ),
+    code(
+        """
+        reported_rows = [
+            ["Worked example P_Q", "0.0017", f"{Pq:.4f}", "Exact from supplementary matrix"],
+            ["Worked example P_C", "0.0349", f"{Pc:.4f}", "Exact from supplementary matrix"],
+            ["Worked example visibility", "0.951", f"{V:.3f}", "Exact from supplementary matrix"],
+            ["Two-photon L1 (Alice vs Bob)", "0.027", "0.027", "Reported in main text"],
+            ["Two-photon L1 (coherent vs Bob)", "0.548", "0.548", "Reported in main text"],
+            ["Three-photon L1 (Alice vs Bob)", "0.122", "0.122", "Reported in main text"],
+            ["Three-photon L1 (coherent vs Bob)", "0.358", "0.358", "Reported in main text"],
+            ["Colliding-output L1 (Alice vs Bob)", "0.153", "0.153", "Reported in main text"],
+            ["Colliding-output L1 (coherent vs Bob)", "0.995", "0.995", "Reported in main text"],
+        ]
+
+        display_table(reported_rows, headers=["Quantity", "Paper", "Notebook", "Status"])
+        """
+    ),
+    md(
+        """
         ## Two-photon Boson Sampling across all non-colliding outputs
 
         A clean way to reproduce the paper's central idea is to fix one input pair and compare:
@@ -348,6 +521,39 @@ cells = [
     ),
     md(
         """
+        ## Figure-style theory plots for the paper's listed inputs
+
+        The next two cells build figure-inspired visualizations similar to Figs. 2 and 3:
+
+        - blue-outlined bars: permanent-based quantum visibility predictions,
+        - yellow circles: coherent-state visibility predictions computed from the supplementary formulas,
+        - x-axis labels: output mode combinations.
+
+        These are **theory reproductions**. They do not yet include Bob's measured orange bars because the paper PDF does not provide a machine-readable table of the experimental values.
+        """
+    ),
+    code(
+        """
+        two_photon_inputs = [(1, 3), (2, 6), (4, 6)]
+
+        for input_modes in two_photon_inputs:
+            S2 = occ_from_modes(input_modes)
+            labels = []
+            quantum_vis = []
+            coherent_vis = []
+            for out_modes, T2 in choose_noncolliding_outputs(2, m=6):
+                Pq, _ = quantum_probability(U2, S2, T2)
+                Pc = classical_probability_noncolliding(U2, S2, T2)
+                labels.append("{" + ",".join(map(str, out_modes)) + "}")
+                quantum_vis.append(visibility(Pc, Pq))
+                coherent_vis.append(coherent_visibility(U2, input_modes, out_modes))
+
+            title = f"Two-photon visibility structure for input {{{','.join(map(str, input_modes))}}}"
+            show_svg(svg_visibility_panel(title, labels, quantum_vis, coherent_vis))
+        """
+    ),
+    md(
+        """
         ## Three-photon Boson Sampling across all non-colliding outputs
 
         For the three-photon case we use the input modes $(1,3,5)$, which also appears in the paper. We evaluate all $\\binom{6}{3}=20$ non-colliding outputs.
@@ -378,6 +584,26 @@ cells = [
         display_table(rows, headers=["Output", "Pq", "Pc", "Visibility"])
         show_svg(svg_bar_chart("Three-photon output probabilities for input {1,3,5}", labels, quantum_vals, classical_vals))
         show_svg(svg_bar_chart("Three-photon visibilities for input {1,3,5}", labels, visibility_vals))
+        """
+    ),
+    code(
+        """
+        three_photon_inputs = [(1, 3, 5), (1, 4, 6), (1, 5, 6)]
+
+        for input_modes in three_photon_inputs:
+            S3 = occ_from_modes(input_modes)
+            labels = []
+            quantum_vis = []
+            coherent_vis = []
+            for out_modes, T3 in choose_noncolliding_outputs(3, m=6):
+                Pq, _ = quantum_probability(U3, S3, T3)
+                Pc = classical_probability_noncolliding(U3, S3, T3)
+                labels.append("{" + ",".join(map(str, out_modes)) + "}")
+                quantum_vis.append(visibility(Pc, Pq))
+                coherent_vis.append(coherent_visibility(U3, input_modes, out_modes, samples=3000))
+
+            title = f"Three-photon visibility structure for input {{{','.join(map(str, input_modes))}}}"
+            show_svg(svg_visibility_panel(title, labels, quantum_vis, coherent_vis))
         """
     ),
     md(
@@ -417,6 +643,56 @@ cells = [
     ),
     md(
         """
+        ## Recreated Fig. 5 trend from the paper
+
+        The main text and caption of Fig. 5 describe how source brightness changes the distance between:
+
+        - Bob's measurements and Alice's ideal Fock-state predictions,
+        - Bob's measurements and Alice's coherent-state predictions.
+
+        The next plot uses the **paper's plotted points transcribed from Fig. 5** to recreate the qualitative trend. These values are useful for project discussion and visualization, but unlike the worked permanent example they are not exact table values published in the PDF text.
+        """
+    ),
+    code(
+        """
+        pump_power = [10, 20, 50, 100]
+        l1_fock_5nm = [0.188, 0.199, 0.218, 0.245]
+        l1_coherent_5nm = [0.229, 0.228, 0.210, 0.204]
+
+        series = [
+            {"name": "L1: Fock prediction vs Bob (5 nm filter)", "y": l1_fock_5nm, "color": "#e53e3e", "dash": "8,6"},
+            {"name": "L1: coherent-state prediction vs Bob (5 nm filter)", "y": l1_coherent_5nm, "color": "#2d3748", "dash": "2,4"},
+        ]
+
+        show_svg(
+            svg_line_chart(
+                "Recreated Fig. 5 trend: imperfect Fock states in Boson Sampling",
+                pump_power,
+                series,
+                x_label="Pump power (%)",
+                y_label="L1 norm",
+                y_min=0.0,
+                y_max=0.28,
+            )
+        )
+
+        display_table(
+            [
+                [10, "0.188", "0.229"],
+                [20, "0.199", "0.228"],
+                [50, "0.218", "0.210"],
+                [100, "0.245", "0.204"],
+            ],
+            headers=["Pump power (%)", "Fock vs Bob (approx. from figure)", "Coherent vs Bob (approx. from figure)"],
+        )
+        print()
+        print("Additional Fig. 5 points visible at 20% pump in the paper image:")
+        print("- 2 nm filter: Fock vs Bob is approximately 0.095")
+        print("- 2 nm filter: coherent vs Bob is approximately 0.260")
+        """
+    ),
+    md(
+        """
         ## Takeaways
 
         This executable notebook reproduces the main calculational logic of the paper:
@@ -427,11 +703,17 @@ cells = [
         - visibility cleanly quantifies non-classical interference,
         - higher-order SPDC terms explain why larger source brightness pushes the experiment away from the ideal Fock-state limit.
 
-        A natural extension for a project report is to add:
+        What is exact here:
 
-        - manual transcription of selected measured bars from Figs. 2 to 5,
-        - an $L_1$-distance calculation against those experimental points,
-        - a short discussion of why permanents make Boson Sampling hard for classical computers.
+        - the unitary matrices from the supplementary material,
+        - the permanent-based worked example,
+        - the quantum visibility predictions for chosen inputs,
+        - the coherent-state predictions computed from the supplementary formulas.
+
+        What is still approximate:
+
+        - the recreated Fig. 5 pump-power points, which are transcribed from the published figure image,
+        - Bob's per-output experimental visibilities in Figs. 2 to 4, which would require digitization or raw data to reproduce exactly.
         """
     ),
 ]
