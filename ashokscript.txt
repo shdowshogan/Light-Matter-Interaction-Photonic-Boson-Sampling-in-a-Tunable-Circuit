@@ -1,6 +1,6 @@
 Script
 
-Start on the title cell.
+Start on the title cell
 
 “Now I’ll present the figure-reproduction part of our project notebook. In this section, our goal is to show how the main plots in the paper arise from the Boson Sampling formalism and from the measured unitary matrices given in the supplementary material.
 
