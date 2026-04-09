@@ -41,95 +41,107 @@ ashok_sections = [
     (
         "Opening",
         """
-        Now I’ll present the figure-reproduction part of our project notebook. In this section, our goal is to show how the main plots in the paper arise from the Boson Sampling formalism and from the measured unitary matrices given in the supplementary material.
+        In my part, I’ll go through the figure-reproduction section of our notebook. The idea here is not just to show a few plots that look similar to the paper, but to show how those plots actually come out of the Boson Sampling formalism and the measured unitary matrices given in the supplementary material.
 
-        This notebook focuses on the figures most relevant to the paper’s core results, namely Figures 2, 3, 4, and 5. For each one, we explain what is being reproduced, how the numbers are obtained, and what the plot tells us physically.
+        I’ll mainly focus on Figures 2, 3, 4, and 5, because together they tell the story of the paper quite nicely. They take us from the basic permanent calculation, to two-photon and three-photon visibility patterns, then to colliding outputs, and finally to the effect of source imperfections.
         """,
     ),
     (
         "Scope",
         """
-        Before going into the plots, I want to clarify what exactly is reproduced here. The matrix-based theory calculations are reproduced directly from the paper’s supplementary material. That includes the permanent-based bosonic probabilities, the distinguishable-particle probabilities, and the visibility predictions.
+        Before I start with the individual figures, I just want to make one thing clear about what is exact and what is reconstructed.
 
-        The summary L1 distances quoted in the main text are also included exactly as reported. For Figure 5, the overall trend is recreated from the published graph, so that part should be understood as a graphical reconstruction. And for Bob’s individual measured bars in Figures 2 to 4, the PDF does not provide a machine-readable numerical table, so what we reproduce here is the theoretical structure of those figures.
+        The matrix-based calculations in this notebook are directly based on the published supplementary material. So whenever we calculate bosonic probabilities, distinguishable probabilities, or visibilities from the unitary, that part is an exact reproduction of the theory using the authors’ own matrix.
+
+        The summary L1 values quoted in the text are also included exactly as reported in the paper.
+
+        For Figure 5, the trend is recreated from the plotted graph, so that part should be thought of as a careful graphical transcription. And for Bob’s individual measured bars in Figures 2 to 4, the paper does not provide a machine-readable data table, so what we reproduce here is the theoretical structure of those figures rather than claiming that every experimental bar has been extracted exactly.
         """,
     ),
     (
         "Figure 2(a)",
         """
-        This cell reproduces the worked example from the supplementary material. The input configuration is one photon in mode 1 and one photon in mode 3, and the output configuration is one photon in mode 2 and one photon in mode 5.
+        I’ll start with Figure 2(a), because this is really the backbone of everything else.
 
-        The important point here is that the paper’s logic starts from the measured unitary matrix. From that unitary, we build the relevant submatrix corresponding to the chosen input and output occupations. Then we compute two quantities.
+        Here the paper gives a worked example from the supplementary material. The input is one photon in mode 1 and one photon in mode 3, and the output we look at is one photon in mode 2 and one photon in mode 5.
 
-        First, the quantum probability, which depends on the permanent of the submatrix. Second, the distinguishable-particle probability, which is computed using the permanent of the mod-squared matrix.
+        What the notebook does is exactly what the paper describes in words. We start from the measured unitary, then we construct the relevant submatrix for that specific input-output event, and then we compute two different probabilities.
 
-        From these two probabilities, we calculate the visibility. The notebook reproduces the same values reported in the paper: P subscript Q equal to 0.0017, P subscript C equal to 0.0349, and visibility about 0.951.
+        The first is the bosonic quantum probability, which comes from the permanent of that submatrix. The second is the distinguishable-particle probability, which comes from the permanent of the mod-squared version.
 
-        This cell is useful in the presentation because it shows that our notebook is not just making similar-looking graphs. It is actually reproducing the central Boson Sampling calculation numerically.
+        Once we have those two numbers, we compute the visibility. The nice thing is that the notebook reproduces the same values quoted in the paper: P subscript Q is 0.0017, P subscript C is 0.0349, and the visibility is about 0.951.
+
+        So while presenting this cell, the main point I would emphasize is that this is where the paper’s core mathematics becomes concrete. We are not just discussing Boson Sampling in abstract terms. We are actually reconstructing the same calculation the authors used.
         """,
     ),
     (
         "Figure 2(c)",
         """
-        Now we move to Figure 2(c), which is the two-photon visibility structure. The paper compares three two-photon input configurations, and for each one it shows how the visibility changes across all possible non-colliding outputs.
+        Now moving to Figure 2(c), this is where we begin to see the visibility pattern across many output configurations in the two-photon case.
 
-        In our notebook, for each input configuration, we compute the bosonic visibility from the permanent-based quantum probabilities. We also compute the coherent-state visibility using the supplementary coherent-state formulas.
+        The paper considers three different two-photon input configurations, and for each one it looks at how the visibility changes over all possible non-colliding outputs.
 
-        So in these plots, the bar structure corresponds to the quantum visibility prediction, while the circular markers correspond to the coherent-state prediction.
+        In the notebook, for every one of those outputs, we calculate the bosonic visibility from the permanent-based probabilities. Alongside that, we also calculate the coherent-state visibility using the formulas from the supplementary material.
 
-        What matters physically is that these two predictions are different. The coherent-state calculation is important because it serves as a classical-optics baseline. If Bob’s measurements followed that coherent-state pattern, then the result could be explained by ordinary classical-wave interference. But the paper shows that Bob matches the quantum prediction much better than the coherent-state one.
+        So when these plots appear, the bars correspond to the quantum visibility prediction, and the circular markers correspond to the coherent-state prediction.
 
-        So while presenting these plots, the main message is: already at the two-photon level, the visibility pattern is structured, input-dependent, and clearly non-classical.
+        What I find important here is not just that the values are different, but that the whole pattern is different. The coherent-state calculation acts as a classical baseline. If Bob’s data followed that pattern, then one could argue that the same optical circuit is just producing an ordinary classical interference effect. But the paper shows that Bob agrees much more strongly with the quantum prediction.
+
+        So this figure is a nice bridge between the basic permanent calculation and the more serious three-photon Boson Sampling result. It already shows that even at the two-photon level, the visibility structure is highly nontrivial and clearly depends on genuine bosonic interference.
         """,
     ),
     (
         "Figure 3",
         """
-        Next is Figure 3, which extends the same idea to the three-photon case. This is the central Boson Sampling part of the paper, because three-photon interference is a stronger test than the simpler two-photon case.
+        Next comes Figure 3, and this is really the central part of the paper, because now we are in the three-photon regime.
 
-        The notebook reproduces the visibility structure for the same three input configurations used in the paper: 1-3-5, 1-4-6, and 1-5-6.
+        The notebook reproduces the visibility structure for the same three input configurations shown by the authors: 1-3-5, 1-4-6, and 1-5-6.
 
-        Again, for each output configuration, we calculate the bosonic visibility from the measured unitary and compare it with the coherent-state prediction. The key thing to notice is that the visibility landscape becomes richer in the three-photon case. Some outputs are strongly enhanced, some are suppressed, and some even go negative.
+        Just like before, for each possible non-colliding output, we compute the bosonic visibility from the measured unitary and compare it with the coherent-state prediction.
 
-        This is exactly what we expect from many-boson interference, because different output events receive contributions from many interfering multi-photon paths, and those contributions combine through the permanent.
+        But now the structure becomes much richer. Some outputs have large positive visibility, some are suppressed, and some even go negative. That is exactly what we expect in a genuine many-boson interference setting, because each output event receives contributions from several multi-photon paths, and all of those combine through the permanent.
 
-        So this section is where we see the real Boson Sampling signature emerging more fully.
+        So when I present this figure, I would probably slow down a little and say that this is where the Boson Sampling idea really becomes visible in the notebook. The two-photon case helps build intuition, but the three-photon case is where the main claim of the paper starts to feel much more substantial.
         """,
     ),
     (
         "Figure 4(b)",
         """
-        This section corresponds to Figure 4(b), which looks at colliding outputs. Until now, we were mostly discussing non-colliding events, where each output mode contains at most one photon. Here, the paper studies outputs in which two photons are detected in the same mode.
+        After that, we come to Figure 4(b), which deals with colliding outputs.
+
+        Up to this point, most of the discussion is about non-colliding events, meaning each occupied output mode contains only one photon. But in Figure 4, the paper deliberately studies outputs where two photons appear in the same output mode.
 
         For the input configuration 1-3-5, the outputs considered are 1-5-5, 2-5-5, 3-5-5, 4-5-5, and 5-5-6.
 
-        The reason this matters is that Boson Sampling is naturally formulated in occupation-number language, so colliding outputs are part of the same formalism. The only difference is that now the output occupation numbers include repetition, so the submatrix construction includes repeated columns.
+        This matters because Boson Sampling is naturally written in occupation-number language, so colliding outputs are not some separate phenomenon. They are part of the same formalism. The only technical change is that repeated occupation means repeated rows or columns in the submatrix construction.
 
-        This notebook computes the corresponding quantum probabilities, distinguishable probabilities, and visibilities for those colliding-output events as well. So this cell shows that the Boson Sampling formalism is not limited to the simpler one-photon-per-mode case.
+        So this cell is useful because it shows that the formalism still works even when the output is more complicated than the simple one-photon-per-mode case. It makes the notebook feel more complete, and it also follows the structure of the paper closely.
         """,
     ),
     (
         "Figure 5",
         """
-        Finally, this cell reproduces the trend shown in Figure 5. This figure is important because it connects the Boson Sampling theory to a practical limitation of the experiment, namely the quality of the photon source.
+        Finally, we reach Figure 5, and this is one of my favorite plots in the paper because it connects the theory to a very real experimental limitation.
 
-        As pump power increases, the spontaneous parametric down-conversion source produces more higher-order photon-number terms. That improves count rate, but it also contaminates the ideal input state.
+        As pump power increases, the down-conversion source produces more higher-order photon-number terms. That helps with count rate, but at the same time it makes the input state less ideal.
 
-        The graph shows how the L1 distance changes with pump power. One curve compares Bob’s data with Alice’s ideal Fock-state prediction, and the other compares Bob’s data with Alice’s coherent-state prediction.
+        The graph tracks how the L1 distance changes with pump power. One curve compares Bob’s measurements with Alice’s ideal Fock-state prediction, and the other compares Bob’s measurements with Alice’s coherent-state prediction.
 
-        The trend is very informative. As pump power increases, the agreement with the ideal Fock-state prediction becomes worse, while the statistics move closer to the more classical baseline. This is the experimental signature of higher-order source imperfections.
+        The trend is very telling. As pump power goes up, the agreement with the ideal Fock-state prediction becomes worse, while the system starts looking closer to the more classical baseline.
 
-        So this figure is especially useful in the presentation because it explains why Boson Sampling is not only a complexity problem or a permanent problem. It is also a state-preparation problem.
+        So this figure is very useful in a presentation, because it reminds us that Boson Sampling is not just about abstract permanents or complexity theory. It also depends critically on how well the photon source approximates the ideal input state.
         """,
     ),
     (
         "Closing",
         """
-        To summarize my part, this notebook reproduces the mathematical and graphical structure of the paper’s main results.
+        So to wrap up my part, this notebook section follows the same logic as the paper itself.
 
-        First, we verified the worked permanent calculation directly from the supplementary unitary. Then we reproduced the two-photon and three-photon visibility structures, followed by the colliding-output case, and finally the source-imperfection trend.
+        We begin with the worked permanent calculation, then move to the two-photon visibility structure, then to the three-photon case, after that to colliding outputs, and finally to the source-imperfection trend.
 
-        Taken together, these plots show how the paper connects the Boson Sampling formalism, the measured unitary, and the observed visibility patterns. That is the main contribution of this notebook section.
+        Taken together, these plots show how the measured unitary, the Boson Sampling formalism, and the observed visibility patterns all fit together.
+
+        For me, that is the real value of this notebook section: it turns the paper from something we read into something we can actually compute, visualize, and explain step by step.
         """,
     ),
 ]
