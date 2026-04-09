@@ -481,13 +481,11 @@ cells = [
     ),
     md(
         r"""
-        ## Theory note: why compare Bob's visibility with Alice's coherent-state visibility?
+        ## Comparison with coherent-state visibility
 
-        This is an important conceptual point in the paper.
+        A central conceptual point in the paper is the comparison between Bob's measured visibility and Alice's coherent-state visibility.
 
-        ### Short answer
-
-        Bob's data are compared with **Alice's coherent-state visibility** to rule out the possibility that the observed interference pattern is just a classical-wave effect of the same interferometer.
+        Bob's data are compared with **Alice's coherent-state visibility** in order to rule out the possibility that the observed interference pattern is merely a classical-wave effect of the same interferometer.
 
         Alice is allowed only classical resources. Coherent states are the most natural classical-optics inputs for a linear network:
 
@@ -495,14 +493,14 @@ cells = [
         - they propagate through the same interferometer,
         - but they do **not** produce the same many-boson interference statistics as Fock-state photon inputs.
 
-        So the comparison has a very specific purpose:
+        The comparison has a very specific purpose:
 
         - if Bob matched both the Fock-state prediction and the coherent-state prediction, the result would not certify genuinely bosonic interference;
         - if Bob matches the Fock-state prediction but **disagrees strongly** with the coherent-state prediction, then the measured distribution is genuinely quantum and not just classical field interference.
 
         This is exactly why the paper emphasizes the large $L_1$ gaps between Bob's measured visibilities and Alice's coherent-state visibilities.
 
-        ### Physical logic
+        ### Physical motivation
 
         The experiment has two different theoretical baselines:
 
@@ -512,11 +510,7 @@ cells = [
         2. **Classical-wave baseline**:
            coherent states pass through the same unitary, but their correlations are computed from phase-averaged field intensities rather than many-boson amplitudes.
 
-        The second comparison is important because the interferometer itself is linear. A skeptic could ask:
-
-        > maybe the output pattern is just something a classical optical field would also produce in the same circuit.
-
-        The coherent-state calculation answers that objection directly.
+        The second comparison is important because the interferometer itself is linear. It is therefore necessary to show that the measured output pattern is not simply something that a classical optical field would also produce in the same circuit. The coherent-state calculation addresses that possibility directly.
 
         ### Mathematical derivation from the supplementary material
 
@@ -560,29 +554,25 @@ cells = [
 
         This is Eq. (11).
 
-        So Alice's coherent-state prediction is **not** the BosonSampling prediction. It is a deliberately classical comparison built from the same measured unitary.
+        Alice's coherent-state prediction is therefore **not** the BosonSampling prediction. It is a deliberately classical comparison built from the same measured unitary, included to demonstrate that Bob's observed statistics cannot be explained by classical optical interference alone.
         """
     ),
     md(
         r"""
-        ## Theory note: how does using visibility preserve the original aim of the experiment?
+        ## Why visibility preserves the original aim of the experiment
 
-        Another common question is: if the original BosonSampling task is to sample output probabilities, why does the paper focus on **visibility** instead of directly comparing raw probabilities?
+        The original BosonSampling task is formulated in terms of output probabilities. The paper, however, compares theory and experiment primarily through **visibility** rather than raw coincidence counts. This does not change the aim of the experiment. Instead, it provides a more robust way to test the same physical statement:
 
-        ### Short answer
+        > the output statistics of the device are governed by bosonic interference predicted from the measured unitary.
 
-        The use of visibility does **not** change the aim of the experiment. It is still probing the same physical statement:
-
-        > are the output statistics of the device governed by bosonic interference predicted from the measured unitary?
-
-        Visibility is simply a more robust observable because it removes detector-efficiency bias while preserving the difference between
+        Visibility is a normalized observable that removes detector-efficiency bias while preserving the difference between
 
         - the indistinguishable-photon distribution, and
         - the distinguishable-photon distribution.
 
-        In other words, visibility is a normalized way of comparing the same two probability laws that BosonSampling theory predicts.
+        In this sense, visibility is a normalized way of comparing the same two probability laws that BosonSampling theory predicts.
 
-        ### Why raw counts are not ideal experimentally
+        ### Why raw counts are not the preferred observable
 
         In the paper, the detectors do not all have identical efficiencies. If one output channel has a worse detector, its raw coincidence counts will be artificially smaller even if the underlying physical probability is correct.
 
@@ -636,7 +626,7 @@ cells = [
         This is the key reason visibility preserves the aim of the experiment:
 
         - it still compares the **same underlying probabilities** $P_T^Q$ and $P_T^C$,
-        - but it removes an experimental nuisance parameter that would otherwise distort the comparison.
+        - while removing an experimental nuisance parameter that would otherwise distort the comparison.
 
         ### Why this still tests BosonSampling theory
 
@@ -651,13 +641,9 @@ cells = [
 
         is still a direct function of the BosonSampling prediction.
 
-        If Alice's predicted visibilities agree with Bob's measured visibilities, then the experiment confirms that the underlying quantum-vs-classical probability difference is the one expected from bosonic interference.
+        If Alice's predicted visibilities agree with Bob's measured visibilities, then the experiment confirms that the underlying quantum-versus-classical probability difference is the one expected from bosonic interference.
 
-        So the experiment is **not** abandoning the original aim. It is measuring a normalized observable that faithfully captures the same physics in a detector-robust way.
-
-        ### One-sentence viva answer
-
-        The paper uses visibility because BosonSampling is fundamentally about the difference between indistinguishable and distinguishable multi-photon statistics, and visibility keeps exactly that difference while cancelling detector-efficiency errors.
+        The experiment is therefore **not** abandoning the original aim. It is measuring a normalized observable that faithfully captures the same physics in a detector-robust way.
         """
     ),
     md(
