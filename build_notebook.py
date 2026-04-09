@@ -481,6 +481,28 @@ cells = [
     ),
     md(
         r"""
+        ## Reproduced figures from the paper
+
+        The next set of notebook sections is organized to parallel the main figures discussed in the paper, especially Figs. 2, 3, 4, and 5. Since this notebook will also be used during the project presentation, it is useful to state clearly what is being reproduced in each case.
+
+        - **Fig. 2(a)** is represented through the explicit worked permanent calculation from the supplementary material. This shows how the submatrix is constructed from the measured unitary and how the quantities $P_T^Q$, $P_T^C$, and the corresponding visibility are obtained.
+        - **Fig. 2(c)** is reproduced through theory plots of the two-photon visibilities for the input configurations highlighted in the paper. These plots compare the permanent-based quantum prediction with the coherent-state prediction derived from the supplementary material.
+        - **Fig. 3** is reproduced through the corresponding three-photon visibility plots for the three input configurations shown in the paper.
+        - **Fig. 4(b)** is reproduced through the colliding-output calculation for the input configuration $\{1,3,5\}$, where two photons are detected in output mode 5.
+        - **Fig. 5** is recreated as a pump-power versus $L_1$-norm trend plot using values transcribed from the published figure.
+
+        It is also important to distinguish between different levels of reproduction:
+
+        - the **matrix-based theory calculations** in this notebook are reproduced directly from the published supplementary material;
+        - the **summary $L_1$ values** quoted in the main text are included exactly as reported;
+        - the **Fig. 5 trend points** are recreated from the plotted figure and are therefore approximate figure transcriptions;
+        - the **per-output measured bars for Bob's data in Figs. 2 to 4** are not numerically tabulated in the PDF, so this notebook reproduces the theoretical structure of those figures rather than claiming exact raw-data recovery.
+
+        This structure is appropriate for the project presentation because it makes clear which parts of the paper are reproduced exactly from published formulas and matrices, and which parts are reconstructed from the figures for qualitative comparison.
+        """
+    ),
+    md(
+        r"""
         ## Comparison with coherent-state visibility
 
         A central conceptual point in the paper is the comparison between Bob's measured visibility and Alice's coherent-state visibility.
@@ -771,6 +793,63 @@ cells = [
 
             title = f"Three-photon visibility structure for input {{{','.join(map(str, input_modes))}}}"
             show_svg(svg_visibility_panel(title, labels, quantum_vis, coherent_vis))
+        """
+    ),
+    md(
+        r"""
+        ## Reproduction of Fig. 4(b): colliding outputs
+
+        Figure 4 of the paper studies a three-photon input with a **colliding output**, meaning that two photons are detected in the same output mode. In the paper this is done for the input configuration $\{1,3,5\}$ and for outputs containing two photons in mode 5.
+
+        In occupation-number notation, the output events considered are
+
+        - $\{1,5,5\}$,
+        - $\{2,5,5\}$,
+        - $\{3,5,5\}$,
+        - $\{4,5,5\}$,
+        - $\{5,5,6\}$.
+
+        The calculation below uses the same repeated-row and repeated-column construction for $U_{ST}$ as in the BosonSampling formalism. This allows the colliding-output visibility structure to be computed from the measured unitary in the same way as for the non-colliding outputs.
+        """
+    ),
+    code(
+        """
+        def classical_probability_general(U, input_occ, output_occ):
+            sub = build_submatrix(U, input_occ, output_occ)
+            weight = [[abs(z) ** 2 for z in row] for row in sub]
+            return permanent(weight).real
+
+
+        colliding_outputs = [
+            (1, 5, 5),
+            (2, 5, 5),
+            (3, 5, 5),
+            (4, 5, 5),
+            (5, 5, 6),
+        ]
+
+        input_modes_fig4 = (1, 3, 5)
+        S_fig4 = occ_from_modes(input_modes_fig4)
+
+        labels = []
+        quantum_vis = []
+        coherent_vis = []
+        rows = []
+
+        for out_modes in colliding_outputs:
+            T4 = occ_from_modes(out_modes)
+            Pq, _ = quantum_probability(U3, S_fig4, T4)
+            Pc = classical_probability_general(U3, S_fig4, T4)
+            Vq = visibility(Pc, Pq)
+            Vcoh = coherent_visibility(U3, input_modes_fig4, out_modes, samples=3000)
+            label = "{" + ",".join(map(str, out_modes)) + "}"
+            labels.append(label)
+            quantum_vis.append(Vq)
+            coherent_vis.append(Vcoh)
+            rows.append([label, f"{Pq:.4f}", f"{Pc:.4f}", f"{Vq:.3f}", f"{Vcoh:.3f}"])
+
+        display_table(rows, headers=["Output", "Pq", "Pc", "Quantum visibility", "Coherent visibility"])
+        show_svg(svg_visibility_panel("Reproduction of Fig. 4(b): colliding outputs for input {1,3,5}", labels, quantum_vis, coherent_vis))
         """
     ),
     md(
