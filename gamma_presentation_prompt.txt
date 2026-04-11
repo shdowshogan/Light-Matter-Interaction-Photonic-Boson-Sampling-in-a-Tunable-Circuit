@@ -1,0 +1,270 @@
+Create a polished academic presentation deck on the paper "Photonic Boson Sampling in a Tunable Circuit" by Broome et al. The audience is a university physics/quantum information class. The deck will be presented by 5 students and must last at most 15 minutes total, so aim for about 11 to 13 content slides plus 1 title slide and 1 backup/reference slide. The presentation should feel rigorous, visually clean, and scientifically credible, but not overloaded. Use concise wording on slides, with presenter-friendly structure and strong figure-driven storytelling.
+
+Very important constraints:
+- This is not just a summary of the paper. The deck must also reflect what our group actually did in the notebook.
+- Emphasize that our notebook reproduces the theoretical predictions and core calculations from the paper, especially the "Alice" side of the analysis.
+- Be explicit about what we could reproduce exactly and what we could not reproduce because the paper does not provide raw experimental coincidence counts.
+- Keep the deck detailed yet concise. Every slide should have one central takeaway.
+- Build the narrative around the paper's "Alice vs Bob" framing because it is intuitive and matches our report.
+- Make the slides suitable for Gamma.app: visually structured, modern, clean hierarchy, minimal clutter, with equations only where they genuinely help.
+
+Presentation goal:
+Explain why boson sampling matters as a challenge to the Extended Church-Turing thesis, how permanents arise from bosonic interference, how the experiment works, what the paper demonstrates, and exactly what our notebook reproduced from the paper.
+
+Tone and style:
+- Academic, crisp, confident, and presentation-ready
+- Physics/quantum information level, not pop-science
+- Use diagrams, flowcharts, comparison tables, and clean highlighted equations
+- Avoid dense paragraphs
+- Prefer short bullet points, callout boxes, and visual comparisons
+- Use a coherent color palette: deep blue for theory/Alice, warm orange or green for experiment/Bob, muted gray for caveats/classical baseline
+
+Recommended deck structure:
+
+Slide 1: Title slide
+- Title: Photonic Boson Sampling in a Tunable Circuit
+- Subtitle: Paper presentation and notebook-based reproduction
+- Include a smaller line: Based on Broome et al. (2013) and our Report.ipynb reproduction
+- Include team size: 5 presenters
+- Visual suggestion: stylized photonic circuit / interference / matrix graphic background
+- Speaker: Presenter 1
+
+Slide 2: Big picture motivation
+- Title: Why This Paper Matters
+- Explain the Extended Church-Turing thesis in one clean sentence
+- Introduce the trilemma motivated by Shor's algorithm:
+  - Either scalable quantum computers are not physical
+  - Or efficient classical factoring exists
+  - Or the Extended Church-Turing thesis is false
+- Key message: Boson sampling offers a simpler route than universal quantum computing to test this boundary
+- Add a highlighted takeaway box: "The goal is not universal quantum computing, but a physical task believed to be classically intractable."
+- Speaker: Presenter 1
+
+Slide 3: Determinant vs permanent
+- Title: The Mathematical Bottleneck
+- Show determinant and permanent formulas side by side
+- Visually emphasize that the only difference is the permutation sign
+- Explain:
+  - Determinant can be computed efficiently, roughly polynomial time
+  - Permanent is #P-complete and scales exponentially
+- Include a mini note from our notebook:
+  - We benchmarked determinant vs naive permanent computation
+  - Determinant stayed fast while permanent became extremely slow
+  - Example result from notebook: for 10x10, determinant is effectively instantaneous while naive permanent took about 8 seconds
+- Key message: boson sampling is hard because multi-photon amplitudes depend on permanents
+- Speaker: Presenter 1
+
+Slide 4: Where the permanent comes from physically
+- Title: Why Bosons Force the Permanent
+- Build an intuitive derivation:
+  - Input Fock state with photons entering selected modes
+  - Linear optical network applies a unitary transformation U
+  - Output amplitude is the sum over all indistinguishable many-photon paths
+  - Because bosonic creation operators commute, all permutations add with positive sign
+- Show the amplitude relation in compact form:
+  - amplitude proportional to Per(U_ST)
+- Add a contrast panel:
+  - Fermions anti-commute
+  - Their amplitudes give determinants instead
+- Key message: bosonic indistinguishability creates the permanent
+- Speaker: Presenter 2
+
+Slide 5: Alice vs Bob framework
+- Title: Boson Sampling as a Computational Race
+- Present the paper's framing as a split comparison:
+  - Alice: classical computer, characterizes U, computes probabilities from permanents
+  - Bob: physical photonic device, injects photons, samples by measurement
+- Explain why this is a race:
+  - For small n, Alice can verify Bob
+  - For larger n, Alice becomes exponentially slow while Bob still samples physically
+- Add a highlighted line:
+  - "This paper operates in the small-n regime where verification is still possible."
+- Speaker: Presenter 2
+
+Slide 6: Experimental setup
+- Title: The 6-Mode Photonic Circuit
+- Describe the experiment clearly:
+  - 6 input/output modes
+  - 2-photon and 3-photon boson sampling
+  - Integrated optical network implementing a measured unitary
+  - SPDC source generates photons
+  - Delays make photons distinguishable or indistinguishable
+  - APDs detect coincidences
+- Mention colliding-output measurement with photon-number resolution using a 50:50 beam splitter for mode 5
+- Visual priority:
+  - circuit schematic / simplified flow diagram rather than too much text
+- Speaker: Presenter 2
+
+Slide 7: How Alice predicts the distribution
+- Title: From Characterized Unitary to Predicted Visibilities
+- Explain the analysis chain:
+  - Characterize the circuit unitary U using an efficient 2m-1 method
+  - Construct U_T by repeating columns according to output occupation
+  - Construct U_ST by repeating rows according to input occupation
+  - Compute:
+    - Quantum probability: P_Q = |Per(U_ST)|^2, with factorial normalization for collisions when needed
+    - Classical distinguishable probability: P_C = Per(tilde(U_ST))
+  - Use visibility:
+    - V_T = (P_C - P_Q) / P_C
+- Add one compact worked example box from the supplementary material:
+  - Input S = (1,0,1,0,0,0)
+  - Output T = (0,1,0,0,1,0)
+  - Predicted visibility about 0.951
+- Speaker: Presenter 3
+
+Slide 8: What our notebook actually reproduced
+- Title: What We Reproduced in Report.ipynb
+- This slide is crucial and should be very explicit
+- Use a two-column or checklist format
+- Left column: Reproduced exactly or directly from published unitary/data
+  - Theory narrative: Church-Turing motivation, permanent vs determinant, bosonic derivation
+  - Submatrix construction U_ST
+  - Two-photon theoretical visibilities for Fig. 2(c)
+  - Three-photon theoretical visibilities for Fig. 3
+  - Colliding-output theoretical visibilities for Fig. 4(b)
+  - Fig. 5 trend using values approximated from the published figure
+- Right column: Not fully reproducible from the paper alone
+  - Bob's raw experimental coincidence counts
+  - Experimental orange/green bars in Figs. 2 to 4
+  - Error boxes from repeated unitary characterizations
+  - Exact raw data behind Fig. 5
+- Add a strong takeaway box:
+  - "Our notebook reproduces the full Alice-side theoretical predictions and the main scientific logic of the paper."
+- Speaker: Presenter 3
+
+Slide 9: Reproduced result 1 - two-photon boson sampling
+- Title: Notebook Reproduction of Figure 2(c)
+- Explain:
+  - Inputs considered in the notebook: {1,3}, {2,6}, {4,6}
+  - All 15 non-colliding 2-photon outputs are evaluated
+  - We compute theoretical bosonic visibilities and coherent-state predictions
+- State clearly:
+  - We reproduced Alice's blue-envelope predictions and coherent-state comparison
+  - We did not reproduce Bob's orange bars because raw count data is unavailable
+- Suggested visual:
+  - simplified version of one panel with a caption-style summary
+- Key message:
+  - Quantum prediction is distinct from coherent-state classical prediction
+- Speaker: Presenter 3
+
+Slide 10: Reproduced result 2 - three-photon and colliding outputs
+- Title: Notebook Reproduction of Figures 3 and 4(b)
+- Divide slide into two blocks:
+  - Three-photon non-colliding case
+    - Inputs: {1,3,5}, {1,4,6}, {1,5,6}
+    - All 20 non-colliding outputs tested theoretically
+  - Three-photon colliding case
+    - Fixed input: {1,3,5}
+    - Outputs: {1,5,5}, {2,5,5}, {3,5,5}, {4,5,5}, {5,5,6}
+    - Factorial normalization for repeated output occupation
+- Include the actual colliding-output values from our notebook in a compact table:
+  - {1,5,5}: Pq 0.0007, Pc 0.0121, Vq 0.943, Vcoh 0.127
+  - {2,5,5}: Pq 0.0077, Pc 0.0094, Vq 0.182, Vcoh -0.170
+  - {3,5,5}: Pq 0.0147, Pc 0.0139, Vq -0.059, Vcoh -0.651
+  - {4,5,5}: Pq 0.0059, Pc 0.0069, Vq 0.149, Vcoh -0.364
+  - {5,5,6}: Pq 0.0021, Pc 0.0090, Vq 0.762, Vcoh 0.046
+- Key message:
+  - The theory extends naturally to both non-colliding and colliding outputs
+- Speaker: Presenter 4
+
+Slide 11: Experimental validation from the paper
+- Title: Did Bob Match Alice?
+- Summarize the paper's reported L1 distances:
+  - 2-photon non-colliding: Alice vs Bob = 0.027, coherent vs Bob = 0.548
+  - 3-photon non-colliding: Alice vs Bob = 0.122, coherent vs Bob = 0.358
+  - 3-photon colliding: Alice vs Bob = 0.153, coherent vs Bob = 0.995
+- Explain the interpretation:
+  - Small Alice-Bob distance means experiment matches bosonic theory
+  - Large coherent-vs-Bob distance means the data is genuinely nonclassical
+- Add one takeaway banner:
+  - "The experiment validates the permanent-based bosonic model in a 6-mode photonic circuit."
+- Speaker: Presenter 4
+
+Slide 12: Imperfections and Figure 5
+- Title: Why the Match Is Not Perfect
+- Explain the two main physical limitations discussed in the paper:
+  - Higher-order SPDC emissions
+  - Partial distinguishability / spectral entanglement
+- Show the trend from Fig. 5:
+  - As pump power increases, Bob's data moves away from ideal Fock-state prediction and toward the classical regime
+- Include the approximate values used in our notebook:
+  - Pump 10, 20, 50, 100%
+  - Fock-vs-Bob L1 approx: 0.188, 0.199, 0.218, 0.245
+  - Coherent-vs-Bob L1 approx: 0.229, 0.228, 0.210, 0.204
+- State clearly:
+  - These values were approximated from the published plot because exact raw data was not provided
+- Speaker: Presenter 5
+
+Slide 13: Final takeaways
+- Title: What This Paper Established
+- End with 4 strong conclusions:
+  - Boson sampling links a physical optical process to matrix permanents
+  - The experiment verifies this link for 2- and 3-photon scattering in a 6-mode circuit
+  - Our notebook reproduces the theoretical core of the paper, especially Alice's full prediction pipeline
+  - Scaling to around 20 to 30 photons is where strong evidence against the Extended Church-Turing thesis would emerge
+- Add a final concluding sentence:
+  - "This work is less about building a universal quantum computer, and more about proving that nature can sample from distributions beyond efficient classical reach."
+- Speaker: Presenter 5
+
+Slide 14: Backup / references
+- Title: Backup / Key References
+- Include:
+  - Broome et al., Photonic Boson Sampling in a Tunable Circuit
+  - Aaronson and Arkhipov boson sampling theory reference
+  - Mention our notebook reproduction: Report.ipynb
+- Optionally include the permanent and visibility formulas again for Q&A
+
+Design instructions:
+- Prioritize visuals over text
+- Use side-by-side contrasts frequently:
+  - determinant vs permanent
+  - bosons vs fermions
+  - Alice vs Bob
+  - ideal theory vs real experiment
+- If using equations, keep them large and isolated, not dense
+- Use figure captions under reproduced-result slides
+- For result slides, include concise "What the paper showed" and "What our notebook reproduced" sublabels
+- Use consistent icons:
+  - matrix icon for permanents
+  - photon/interference icon for experiment
+  - laptop icon for Alice
+  - chip/laser/detector icon for Bob
+
+Speaker planning:
+- Presenter 1: Slides 1 to 3
+- Presenter 2: Slides 4 to 6
+- Presenter 3: Slides 7 to 9
+- Presenter 4: Slides 10 to 11
+- Presenter 5: Slides 12 to 13
+- Slide 14 is backup only
+
+Timing guidance:
+- Total target: 13 to 15 minutes
+- Average around 1 minute per main slide
+- Spend slightly more time on slides 4, 8, 10, and 11
+- Keep slide 3 mathematical but quick
+- Keep slide 14 only for Q&A
+
+Non-negotiable content accuracy notes:
+- Do not say the experiment computes permanents directly; it samples from a distribution whose amplitudes depend on permanents
+- Do not claim our notebook reproduced Bob's raw experimental bars for Figs. 2, 3, and 4; it did not
+- Do not hide the data limitations of the paper
+- Do emphasize that the notebook faithfully reproduces the core theoretical predictions, submatrix construction logic, visibility calculations, and the scientific interpretation
+- Do mention that colliding outputs require repeated columns in U_ST and factorial normalization
+- Do mention that coherent-state predictions act as a classical baseline and differ strongly from true bosonic results
+
+Optional enhancements if space permits:
+- A miniature flowchart: unitary characterization -> build U_ST -> permanent -> probability -> visibility -> compare with experiment
+- A tiny note that the paper uses an efficient 2m-1 characterization method instead of full process tomography
+- A subtle footer note on result slides: "Raw experimental counts not published; theoretical reproduction only"
+
+Output requirement:
+Generate the deck in a format optimized for Gamma presentation slides, with clean slide titles, concise body text, strong visual layout suggestions, and presenter-ready sequencing. Keep the content scientifically accurate and aligned with our notebook-based reproduction.
+
+
+
+Because factoring is presumed to be computationally intractable for classical systems, we are left with three distinct possibilities:
+1. Physics breaks down: A scalable quantum computer is not actually a realistic physical device, perhaps because quantum mechanics fails to hold for a large number of qubits
+2. Mathematics/Complexity Theory is incomplete: If scalable quantum computers are realistic, and the Extended Church-Turing thesis is correct, then a classical, efficient factoring algorithm must exist (which would break modern public-key cryptography like RSA).
+3. Computer Science must be revised: The Extended Church-Turing thesis itself is fundamentally wrong.
+Currently, there is no physical evidence that quantum mechanics breaks down at scale, nor is there any mathematical proof of an efficient classical factoring algorithm. This leaves the scientific community to critically examine the validity of the Extended Church-Turing thesis.
